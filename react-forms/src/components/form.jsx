@@ -1,4 +1,4 @@
-import useState from "react";
+import {useState} from "react";
 
 
 const Form = () => {
@@ -13,29 +13,59 @@ const Form = () => {
         email_notifications: ""
     })
 
-    const handleSubmit = () => {
-        console.log("submitted")
+    const [error_message, SetError] = useState({
+        name_error:"",
+        email_error:"",
+        phone_number_error:"",
+        phone_type_error:"",
+        staff_error:"",
+        bio_error:"",
+        email_notification_error:""
+    })
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (user.name === "") {
+            const newError = Object.assign({},error_message, {name_error: "Name cannot be empty" });
+            SetError(newError);
+            
+        }
+        if (user.bio.length > 280) {
+            const newError = Object.assign({},error_message, {bio_error: "Bio must be <280 characters long" });
+            SetError(newError);
+        }
+       
+     
+       
     }
 
     const handleChange = (incomingKey) => {
-        console.log(incomingKey)
+       return (e) => {
+        const newObj = Object.assign({},user, {[incomingKey]: e.target.value });
+        setUser(newObj);
+        console.log(user);
+       }
     }
-
+//  debugger
     return (<form className="form" onSubmit={handleSubmit}>
         <div>
-            <label htmlfor="name">Name</label>
-            <input id="name" type="text" value={user.name} onChange={handleChange("name")}></input>
+            <label htmlFor="name">Name</label>
+            <input id="name" type="text" value={user.name} onChange={handleChange("name")} />
+            {error_message.name_error && 
+                (<p className="error"> {error_message.name_error}  </p>)
+            }
         </div>
         <div>
-            <label htmlfor="email">Email</label>
-            <input id="email" type="text" value={user.email} onChange={handleChange("email")}></input>
+            <label htmlFor="email">Email</label>
+            <input id="email" type="text" value={user.email} onChange={handleChange("email")} />
         </div>
         <div>
-            <label htmlfor="phone-number">Phone Number</label>
-            <input id="phone-number" type="text" value={user.phone_number} onChange={handleChange("phone_number")}></input>
+            <label htmlFor="phone-number">Phone Number</label>
+            <input id="phone-number" type="text" value={user.phone_number} onChange={handleChange("phone_number")}/>
         </div>
         <div>
-            <label htmlfor="phone-type">Phone Type</label>
+            <label htmlFor="phone-type">Phone Type</label>
             <select id="phone-type" name="phone-type" value={user.phone_type} onChange={handleChange("phone_type")}>
                 <option value="home">Home</option>
                 <option value="work">work</option>
@@ -51,16 +81,19 @@ const Form = () => {
             </label>
         </div>
         <div>
-            <label htmlfor="bio">Bio</label>
+            <label htmlFor="bio">Bio</label>
             <textarea id="bio" value={user.bio} onChange={handleChange("bio")}/>
+            {error_message.bio_error && 
+                (<p className="error"> {error_message.bio_error}  </p>)
+            }
         </div>
         <div>
-            <label htmlfor="email-notifications">Email Notifications
+            <label htmlFor="email-notifications">Email Notifications
             <input type="checkbox" name="email-notifications" value={user.email_notifications} onChange={handleChange("email_notifications")}/>
             </label>
         </div>
         <div>
-            <button id="submit-button" value="submit">
+            <button id="submit-button" >
                 Submit Button
             </button>
         </div>
