@@ -26,18 +26,46 @@ const Form = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        let regex = /^[\w.-]+@[a-zA-Z\d.-]+.[a-zA-Z]{2,}$/;
+
+        let re = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+
+        SetError({
+                name_error:"",
+                email_error:"",
+                phone_number_error:"",
+                phone_type_error:"",
+                staff_error:"",
+                bio_error:"",
+                email_notification_error:""})
+
         if (user.name === "") {
-            const newError = Object.assign({},error_message, {name_error: "Name cannot be empty" });
-            SetError(newError);
-            
+            // const newError = Object.assign({},error_message, {name_error: "Name cannot be empty" });
+            SetError(previousErrors => {
+                return Object.assign({}, previousErrors,{name_error: "Name cannot be empty" })
+            });
         }
         if (user.bio.length > 280) {
-            const newError = Object.assign({},error_message, {bio_error: "Bio must be <280 characters long" });
-            SetError(newError);
+            // const newError = Object.assign({},error_message, {bio_error: "Bio must be <280 characters long" });
+            SetError(previousErrors =>  {
+                return Object.assign({}, previousErrors,{bio_error: "Bio must be <280 characters long" })
+            });
         }
-       
-     
-       
+
+        if (!user.email.match(regex)) {
+            // const newError = Object.assign({},error_message, {email_error: "Please Format Email Correctly"});
+            SetError(previousErrors =>  {
+                return Object.assign({}, previousErrors,{email_error: "Please Format Email Correctly"})
+            });
+        }
+
+        if (!user.phone_number.match(re)) {
+            // const newError = Object.assign({},error_message, {phone_error: "Please Enter a Correct Phone Number"});
+            SetError(previousErrors => {
+                return Object.assign({}, previousErrors,{phone_error: "Please Enter a Correct Phone Number"})
+            });
+        }
+  
     }
 
     const handleChange = (incomingKey) => {
@@ -52,17 +80,23 @@ const Form = () => {
         <div>
             <label htmlFor="name">Name</label>
             <input id="name" type="text" value={user.name} onChange={handleChange("name")} />
-            {error_message.name_error && 
+            {error_message && 
                 (<p className="error"> {error_message.name_error}  </p>)
             }
         </div>
         <div>
             <label htmlFor="email">Email</label>
             <input id="email" type="text" value={user.email} onChange={handleChange("email")} />
+            {error_message && 
+                (<p className="error"> {error_message.email_error}  </p>)
+            }
         </div>
         <div>
             <label htmlFor="phone-number">Phone Number</label>
             <input id="phone-number" type="text" value={user.phone_number} onChange={handleChange("phone_number")}/>
+            {error_message && 
+                (<p className="error"> {error_message.phone_error}  </p>)
+            }
         </div>
         <div>
             <label htmlFor="phone-type">Phone Type</label>
@@ -83,7 +117,7 @@ const Form = () => {
         <div>
             <label htmlFor="bio">Bio</label>
             <textarea id="bio" value={user.bio} onChange={handleChange("bio")}/>
-            {error_message.bio_error && 
+            {error_message && 
                 (<p className="error"> {error_message.bio_error}  </p>)
             }
         </div>
@@ -93,7 +127,7 @@ const Form = () => {
             </label>
         </div>
         <div>
-            <button id="submit-button" >
+            <button id="submit-button">
                 Submit Button
             </button>
         </div>
